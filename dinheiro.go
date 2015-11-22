@@ -6,7 +6,8 @@ import (
 )
 
 const (
-	valorInferiorZeroException = "Valor inferior a zero reais"
+	valorNegativoException = "Não é possível transformar números negativos."
+	valorNaoSuportado      = "Número muito grande para ser transformado em extenso."
 
 	e = "e"
 
@@ -117,7 +118,7 @@ func (real Real) String() (string, error) {
 func getNumero(f float64) (string, error) {
 	switch {
 	case f < 0:
-		return "", errors.New(valorInferiorZeroException)
+		return "", errors.New(valorNegativoException)
 	case f < 20:
 		return numeros[int(f)], nil
 	case f >= 20 && f < 100:
@@ -141,7 +142,7 @@ func getNumero(f float64) (string, error) {
 	case f == 1000:
 		return "mil", nil
 	default:
-		return "", errors.New("Valor não suportado")
+		return "", errors.New(valorNaoSuportado)
 	}
 }
 
