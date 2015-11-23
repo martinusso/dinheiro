@@ -2,23 +2,23 @@ package dinheiro
 
 import "testing"
 
-func TestValorNegativo(t *testing.T) {
+func TestNegativeValue(t *testing.T) {
 	var real Real
 	real = -1
 	_, err := real.PorExtenso()
 
 	if err == nil {
-		t.Errorf("Expected '%v' got '%v'", valorNegativoException, err.Error())
+		t.Errorf("Expected '%v' got '%v'", negativeValueError, err.Error())
 	}
 }
 
-func TestValorSuperiorLimite(t *testing.T) {
+func TestUnsupportedValue(t *testing.T) {
 	var real Real
 	real = 99999999999999
 	_, err := real.PorExtenso()
 
 	if err == nil {
-		t.Errorf("Expected '%v' got '%v'", valorNaoSuportado, err.Error())
+		t.Errorf("Expected '%v' got '%v'", unsupportedValueError, err.Error())
 	}
 }
 
@@ -35,7 +35,7 @@ func TestCentavos(t *testing.T) {
 		0.80, 0.88,
 		0.90, 0.99,
 	}
-	var valoresPorExtenso = [36]string{
+	var valuesIntoWords = [36]string{
 		"um centavo",
 		"dois centavos",
 		"três centavos",
@@ -74,7 +74,7 @@ func TestCentavos(t *testing.T) {
 	}
 	var real Real
 	for i := 0; i < 35; i++ {
-		want := valoresPorExtenso[i]
+		want := valuesIntoWords[i]
 		real = Real(valores[i])
 		got, err := real.PorExtenso()
 
@@ -88,8 +88,8 @@ func TestCentavos(t *testing.T) {
 	}
 }
 
-func TestValoresInteiros(t *testing.T) {
-	var valoresPorExtenso = [20]string{
+func TestIntegersValues(t *testing.T) {
+	var valuesIntoWords = [20]string{
 		"zero real",
 		"um real",
 		"dois reais",
@@ -113,7 +113,7 @@ func TestValoresInteiros(t *testing.T) {
 	}
 	var real Real
 	for i := 0; i < 19; i++ {
-		want := valoresPorExtenso[i]
+		want := valuesIntoWords[i]
 		real = Real(i)
 		got, err := real.PorExtenso()
 
@@ -142,8 +142,8 @@ func TestUmRealENoventaENoveCentavos(t *testing.T) {
 	}
 }
 
-func TestDezenas(t *testing.T) {
-	dezenas := [8]string{
+func TestTens(t *testing.T) {
+	tens := [8]string{
 		"vinte reais",
 		"trinta reais",
 		"quarenta reais",
@@ -155,7 +155,7 @@ func TestDezenas(t *testing.T) {
 	}
 	var real Real
 	for i := 0; i < 8; i++ {
-		want := dezenas[i]
+		want := tens[i]
 
 		real = Real(i*10 + 20)
 		got, err := real.PorExtenso()
@@ -185,8 +185,8 @@ func TestQuarentaEDoisReaisESessentaENoveCentavos(t *testing.T) {
 	}
 }
 
-func TestCentenas(t *testing.T) {
-	dezenas := [9]string{
+func TestHundreds(t *testing.T) {
+	hundreds := [9]string{
 		"cem reais",
 		"duzentos reais",
 		"trezentos reais",
@@ -199,7 +199,7 @@ func TestCentenas(t *testing.T) {
 	}
 	var real Real
 	for i := 1; i <= 9; i++ {
-		want := dezenas[i-1]
+		want := hundreds[i-1]
 
 		real = Real(i * 100)
 		got, err := real.PorExtenso()

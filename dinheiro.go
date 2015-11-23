@@ -6,20 +6,20 @@ import (
 )
 
 const (
-	valorNegativoException = "Não é possível transformar números negativos."
-	valorNaoSuportado      = "Número muito grande para ser transformado em extenso."
+	negativeValueError = "Não é possível transformar números negativos."
+	unsupportedValueError      = "Número muito grande para ser transformado em extenso."
 
-	e = "e"
+	andSeparator = " e "
 
-	centavoSingular = "centavo"
-	centavosPlural  = "centavos"
+	currencyCentavo = "centavo"
+	currencyCentavos  = "centavos"
 
-	realSingular = "real"
-	realPlural   = "reais"
+	currencyReal = "real"
+	currencyReais   = "reais"
 )
 
 var (
-	numeros = [20]string{
+	numbers = [20]string{
 		"zero",
 		"um",
 		"dois",
@@ -41,7 +41,7 @@ var (
 		"dezoito",
 		"dezenove"}
 
-	dezenas = [8]string{
+	tens = [8]string{
 		"vinte",
 		"trinta",
 		"quarenta",
@@ -52,7 +52,7 @@ var (
 		"noventa",
 	}
 
-	centenas = [9]string{
+	hundreds = [9]string{
 		"cento",
 		"duzentos",
 		"trezentos",
@@ -69,8 +69,6 @@ var (
 	milhoes  = "milhôes"
 	bilhao   = "bilhão"
 	bilhoes  = "bilhões"
-	trilhao  = "trilhão"
-	trilhoes = "trilhôes"
 )
 
 // Dinheiro interface do dinheiro
@@ -79,85 +77,86 @@ type Dinheiro interface {
 }
 
 // Real é a moeda corrente no Brasil
+// en: Real is the present-day currency of Brazil
 type Real float64
 
-// PorExtenso Retorna o valor por extenso do dinheiro
+// PorExtenso Retorna o value por extenso do dinheiro
+// en: Returns the value into words
 func (real Real) PorExtenso() (string, error) {
-	inteiro, fracionario := math.Modf(float64(real))
+	var value string
 
-	var valor string
+	integer, fractional := math.Modf(float64(real))
 
-	if inteiro != 0 || fracionario == 0 {
-		numeroPorExtenso, err := getNumero(inteiro)
+	if integer != 0 || fractional == 0 {
+		numberIntoWords, err := convertNumberIntoWords(integer)
 		if err != nil {
 			return "", err
 		}
-		moeda := getMoeda(float64(inteiro))
-		valor = numeroPorExtenso + " " + moeda
+		value = numberIntoWords + " " + getIntegerUnit(integer)
 	}
 
-	if fracionario > 0 {
-		fracionario := round(math.Abs(fracionario) * 100)
-		numeroPorExtenso, err := getNumero(fracionario)
+	if fractional > 0 {
+		fractional := round(math.Abs(fractional) * 100)
+		numberIntoWords, err := convertNumberIntoWords(fractional)
 		if err != nil {
 			return "", err
 		}
-		if inteiro > 0 {
-			valor += " e "
+		if integer > 0 {
+			value += andSeparator
 		}
-		valor += numeroPorExtenso + " " + getCents(fracionario)
+		value += numberIntoWords + " " + getDecimalUnit(fractional)
 	}
 
-	return valor, nil
+	return value, nil
 }
 
 func (real Real) String() (string, error) {
 	return real.PorExtenso()
 }
 
-func getNumero(f float64) (string, error) {
+func convertNumberIntoWords(f float64) (string, error) {
 	switch {
 	case f < 0:
-		return "", errors.New(valorNegativoException)
+		return "", errors.New(negativeValueError)
 	case f < 20:
-		return numeros[int(f)], nil
+		return numbers[int(f)], nil
 	case f >= 20 && f < 100:
-		valor := dezenas[int((f-20)/10)]
+		value := tens[int((f-20)/10)]
 		mod := math.Mod(f, 10)
 		if mod != 0 {
-			complemento, _ := getNumero(mod)
-			valor += " e " + complemento
+			complemento, _ := convertNumberIntoWords(mod)
+			value += " e " + complemento
 		}
-		return valor, nil
+		return value, nil
 	case f >= 100 && f < 101:
 		return cem, nil
 	case f >= 101 && f < 1000:
-		valor := centenas[int(f/100-1)]
+		value := hundreds[int(f/100-1)]
 		mod := math.Mod(f, 100)
 		if mod != 0 {
-			complemento, _ := getNumero(mod)
-			valor += " e " + complemento
+			complemento, _ := convertNumberIntoWords(mod)
+			value += " e " + complemento
 		}
-		return valor, nil
+		return value, nil
 	case f == 1000:
-		return "mil", nil
+		return milhar, nil
 	default:
-		return "", errors.New(valorNaoSuportado)
+		return "", errors.New(unsupportedValueError)
 	}
 }
 
-func getMoeda(f float64) string {
+func getIntegerUnit(f float64) string {
 	if f >= 0 && f < 2 {
-		return realSingular
+		return currencyReal
 	}
-	return realPlural
+	return currencyReais
 }
 
-func getCents(f float64) string {
+func getDecimalUnit(f float64) string {
 	if f == 1 {
-		return centavoSingular
+		return currencyCentavo
 	}
-	return centavosPlural
+	return currencyCentavos
 }
 
 func round(val float64) float64 {
