@@ -13,7 +13,6 @@ const (
 
 	currencyCentavo = "centavo"
 	currencyCentavos  = "centavos"
-
 	currencyReal = "real"
 	currencyReais   = "reais"
 )
@@ -70,11 +69,6 @@ var (
 	bilhao   = "bilhão"
 	bilhoes  = "bilhões"
 )
-
-// Dinheiro interface do dinheiro
-type Dinheiro interface {
-	PorExtenso() (string, error)
-}
 
 // Real é a moeda corrente no Brasil
 // en: Real is the present-day currency of Brazil
