@@ -6,15 +6,15 @@ import (
 )
 
 const (
-	negativeValueError = "Não é possível transformar números negativos."
-	unsupportedValueError      = "Número muito grande para ser transformado em extenso."
+	negativeValueError    = "Não é possível transformar números negativos."
+	unsupportedValueError = "Número muito grande para ser transformado em extenso."
 
 	andSeparator = " e "
 
-	currencyCentavo = "centavo"
-	currencyCentavos  = "centavos"
-	currencyReal = "real"
-	currencyReais   = "reais"
+	currencyCentavo  = "centavo"
+	currencyCentavos = "centavos"
+	currencyReal     = "real"
+	currencyReais    = "reais"
 )
 
 var (
@@ -62,12 +62,12 @@ var (
 		"oitocentos",
 		"novecentos",
 	}
-	cem      = "cem"
-	milhar   = "mil"
-	milhao   = "milhão"
-	milhoes  = "milhôes"
-	bilhao   = "bilhão"
-	bilhoes  = "bilhões"
+	hundred  = "cem"
+	thousand = "mil"
+	million  = "milhão"
+	millions = "milhões"
+	billion  = "bilhão"
+	billions = "bilhões"
 )
 
 // Real é a moeda corrente no Brasil
@@ -114,26 +114,26 @@ func convertNumberIntoWords(f float64) (string, error) {
 		return "", errors.New(negativeValueError)
 	case f < 20:
 		return numbers[int(f)], nil
-	case f >= 20 && f < 100:
+	case f < 100:
 		value := tens[int((f-20)/10)]
 		mod := math.Mod(f, 10)
 		if mod != 0 {
-			complemento, _ := convertNumberIntoWords(mod)
-			value += " e " + complemento
+			remaining, _ := convertNumberIntoWords(mod)
+			value += andSeparator + remaining
 		}
 		return value, nil
-	case f >= 100 && f < 101:
-		return cem, nil
-	case f >= 101 && f < 1000:
+	case f == 100:
+		return hundred, nil
+	case f < 1000:
 		value := hundreds[int(f/100-1)]
 		mod := math.Mod(f, 100)
 		if mod != 0 {
-			complemento, _ := convertNumberIntoWords(mod)
-			value += " e " + complemento
+			remaining, _ := convertNumberIntoWords(mod)
+			value += andSeparator + remaining
 		}
 		return value, nil
 	case f == 1000:
-		return milhar, nil
+		return thousand, nil
 	default:
 		return "", errors.New(unsupportedValueError)
 	}
