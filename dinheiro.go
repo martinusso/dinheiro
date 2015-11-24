@@ -3,6 +3,7 @@ package dinheiro
 import (
 	"errors"
 	"math"
+	"strconv"
 )
 
 const (
@@ -133,6 +134,17 @@ func convertNumberIntoWords(f float64) (string, error) {
 		return value, nil
 	case f == 1000:
 		return thousand, nil
+	case f < 1000000:
+		s := strconv.Itoa(int(f))
+		t1, _ := strconv.Atoi(s[:len(s)-3])
+		t2, _ := strconv.Atoi(s[len(s)-3:])
+		value, _ := convertNumberIntoWords(float64(t1))
+		value += " " + thousand
+		if t2 > 0 {
+			t2IntoWords, _ := convertNumberIntoWords(float64(t2))
+			value += andSeparator + t2IntoWords
+		}
+		return value, nil
 	default:
 		return "", errors.New(unsupportedValueError)
 	}

@@ -228,3 +228,33 @@ func TestMilReais(t *testing.T) {
 		t.Errorf("Expected '%v' got '%v'", want, got)
 	}
 }
+
+func TestDoisMilEQuinzeReais(t *testing.T) {
+	want := "dois mil e quinze reais"
+	var real Real
+	real = 2015
+	got, err := real.PorExtenso()
+
+	if err != nil {
+		t.Errorf("Expected '%v' got '%v'", nil, err)
+	}
+
+	if got != want {
+		t.Errorf("Expected '%v' got '%v'", want, got)
+	}
+}
+
+func TestOitocentosEDoisMilESetencentosQuinzeReais(t *testing.T) {
+	want := "oitocentos e dois mil e setecentos e quinze reais"
+	var real Real
+	real = 802715
+	got, err := real.PorExtenso()
+
+	if err != nil {
+		t.Errorf("Expected '%v' got '%v'", nil, err)
+	}
+
+	if got != want {
+		t.Errorf("Expected '%v' got '%v'", want, got)
+	}
+}
