@@ -118,8 +118,7 @@ func convertNumberIntoWords(f float64) (string, error) {
 		value := tens[int((f-20)/10)]
 		mod := math.Mod(f, 10)
 		if mod != 0 {
-			remaining, _ := convertNumberIntoWords(mod)
-			value += andSeparator + remaining
+			value += andSeparator + numbers[int(mod)]
 		}
 		return value, nil
 	case f == 100:
