@@ -8,7 +8,7 @@ func TestNegativeValue(t *testing.T) {
 	_, err := real.PorExtenso()
 
 	if err == nil {
-		t.Errorf("Expected '%v' got '%v'", negativeValueError, err.Error())
+		t.Errorf("Expected '%v' got '%v'", negativeValueError, nil)
 	}
 }
 
@@ -18,13 +18,13 @@ func TestUnsupportedValue(t *testing.T) {
 	_, err := real.PorExtenso()
 
 	if err == nil {
-		t.Errorf("Expected '%v' got '%v'", unsupportedValueError, err.Error())
+		t.Errorf("Expected '%v' got '%v'", unsupportedValueError, nil)
 	}
 }
 
 func TestCentavos(t *testing.T) {
 	var valores = [36]float64{
-		0.01, 0.02, 0.03, 0.04, 0.05, 0.06, 0.07, 0.08, 0.09, 
+		0.01, 0.02, 0.03, 0.04, 0.05, 0.06, 0.07, 0.08, 0.09,
 		0.1, 0.11, 0.12, 0.13, 0.14, 0.15, 0.16, 0.17, 0.18, 0.19,
 		0.20, 0.22,
 		0.30, 0.33,
