@@ -116,38 +116,51 @@ func convertNumberIntoWords(f float64) (string, error) {
 	case f < 20:
 		return numbers[int(f)], nil
 	case f < 100:
-		value := tens[int((f-20)/10)]
-		mod := math.Mod(f, 10)
-		if mod != 0 {
-			value += andSeparator + numbers[int(mod)]
-		}
-		return value, nil
+		return getNumberUnderHundred(f)
 	case f == 100:
 		return hundred, nil
 	case f < 1000:
-		value := hundreds[int(f/100-1)]
-		mod := math.Mod(f, 100)
-		if mod != 0 {
-			remaining, _ := convertNumberIntoWords(mod)
-			value += andSeparator + remaining
-		}
-		return value, nil
+		return getNumberUnderThousand(f)
 	case f == 1000:
 		return thousand, nil
 	case f < 1000000:
-		s := strconv.Itoa(int(f))
-		t1, _ := strconv.Atoi(s[:len(s)-3])
-		t2, _ := strconv.Atoi(s[len(s)-3:])
-		value, _ := convertNumberIntoWords(float64(t1))
-		value += " " + thousand
-		if t2 > 0 {
-			t2IntoWords, _ := convertNumberIntoWords(float64(t2))
-			value += andSeparator + t2IntoWords
-		}
-		return value, nil
+		return getNumberUnderMillion(f)
 	default:
 		return "", errors.New(unsupportedValueError)
 	}
+}
+
+func getNumberUnderHundred(f float64) (string, error) {
+	value := tens[int((f-20)/10)]
+	mod := math.Mod(f, 10)
+	if mod != 0 {
+		value += andSeparator + numbers[int(mod)]
+	}
+	return value, nil
+}
+
+func getNumberUnderThousand(f float64) (string, error) {
+	value := hundreds[int(f/100-1)]
+	mod := math.Mod(f, 100)
+	if mod != 0 {
+		remaining, _ := convertNumberIntoWords(mod)
+		value += andSeparator + remaining
+	}
+	return value, nil
+}
+
+func getNumberUnderMillion(f float64) (string, error) {
+	s := strconv.Itoa(int(f))
+	t1, _ := strconv.Atoi(s[:len(s)-3])
+	t2, _ := strconv.Atoi(s[len(s)-3:])
+
+	value, _ := convertNumberIntoWords(float64(t1))
+	value += " " + thousand
+	if t2 > 0 {
+		t2IntoWords, _ := convertNumberIntoWords(float64(t2))
+		value += andSeparator + t2IntoWords
+	}
+	return value, nil
 }
 
 func getIntegerUnit(f float64) string {
