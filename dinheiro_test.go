@@ -2,6 +2,19 @@ package dinheiro
 
 import "testing"
 
+func TestRealPorExtenso(t *testing.T) {
+	value := 1.99
+	expected := "um real e noventa e nove centavos"
+	got, err := RealPorExtenso(value)
+
+	if err != nil {
+		t.Errorf("It wasn't expected any error, got '%s'", err.Error())
+	}
+	if got != expected {
+		t.Errorf("Expected '%s' got '%s'", expected, got)
+	}
+}
+
 func TestNegativeValue(t *testing.T) {
 	var real Real
 	real = -1
