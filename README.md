@@ -3,9 +3,7 @@
 Converte um valor monetário (em Real) por extenso
 
 
-*[en]: Returns the Real Currency into words. The return will be in Portuguese.*
-
-*Real is the present-day currency of Brazil. Its sign is R$ and its ISO code is BRL.*
+*[en]: Returns the Real Currency (the present-day currency of Brazil) into words. The return will be in Portuguese.*
 
 [![Circle CI](https://circleci.com/gh/martinusso/dinheiro/tree/master.svg?style=shield&circle-token=:circle-token)](https://circleci.com/gh/martinusso/dinheiro/tree/master)
 [![GoDoc](https://godoc.org/github.com/martinusso/dinheiro?status.svg)](https://godoc.org/github.com/martinusso/dinheiro)
