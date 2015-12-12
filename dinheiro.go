@@ -105,10 +105,6 @@ func (real Real) PorExtenso() (string, error) {
 	return value, nil
 }
 
-func (real Real) String() (string, error) {
-	return real.PorExtenso()
-}
-
 func convertNumberIntoWords(f float64) (string, error) {
 	switch {
 	case f < 0:
