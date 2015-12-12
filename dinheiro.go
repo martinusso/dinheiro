@@ -1,3 +1,5 @@
+// Package dinheiro Converte um valor monetário (em Real) por extenso
+// en: Returns the Real Currency (the present-day currency of Brazil) into words
 package dinheiro
 
 import (
