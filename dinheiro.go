@@ -1,3 +1,5 @@
+// Package dinheiro Converte um valor monetário (em Real) por extenso
+// en: Returns the Real Currency (the present-day currency of Brazil) into words
 package dinheiro
 
 import (
@@ -77,12 +79,18 @@ var (
 		"sexdecilhões", "septendecilhões", "octodecilhões", "novendecilhões", "vigintilhões"}
 )
 
+// RealPorExtenso Retorna um valor em Real por extenso
+// [en: Returns a value (Real Currency as float64) into words]
+func RealPorExtenso(value float64) (string, error) {
+	return Real(value).PorExtenso()
+}
+
 // Real é a moeda corrente no Brasil
-// en: Real is the present-day currency of Brazil
+// [en: Real is the present-day currency of Brazil]
 type Real float64
 
-// PorExtenso Retorna o value por extenso do dinheiro
-// en: Returns the value into words
+// PorExtenso Retorna o valor por extenso
+// [en: Returns the value into words]
 func (real Real) PorExtenso() (string, error) {
 	words := []string{}
 
