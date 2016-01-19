@@ -12,16 +12,6 @@ func TestNegativeValue(t *testing.T) {
 	}
 }
 
-func TestUnsupportedValue(t *testing.T) {
-	var real Real
-	real = 99999999999999
-	_, err := real.PorExtenso()
-
-	if err == nil {
-		t.Errorf("Expected '%v' got '%v'", unsupportedValueError, nil)
-	}
-}
-
 func TestCentavos(t *testing.T) {
 	var valores = [36]float64{
 		0.01, 0.02, 0.03, 0.04, 0.05, 0.06, 0.07, 0.08, 0.09,
@@ -248,6 +238,36 @@ func TestOitocentosEDoisMilESetencentosQuinzeReais(t *testing.T) {
 	want := "oitocentos e dois mil e setecentos e quinze reais"
 	var real Real
 	real = 802715
+	got, err := real.PorExtenso()
+
+	if err != nil {
+		t.Errorf("Expected '%v' got '%v'", nil, err)
+	}
+
+	if got != want {
+		t.Errorf("Expected '%v' got '%v'", want, got)
+	}
+}
+
+func TestMilhoes(t *testing.T) {
+	want := "setecentos e setenta e cinco milhões, trezentos e noventa e oito mil e sete reais"
+	var real Real
+	real = 775398007
+	got, err := real.PorExtenso()
+
+	if err != nil {
+		t.Errorf("Expected '%v' got '%v'", nil, err)
+	}
+
+	if got != want {
+		t.Errorf("Expected '%v' got '%v'", want, got)
+	}
+}
+
+func TestBilhao(t *testing.T) {
+	want := "um bilhão, cento e dezenove milhões, novecentos e vinte e nove mil e quinhentos e vinte e um reais"
+	var real Real
+	real = 1119929521
 	got, err := real.PorExtenso()
 
 	if err != nil {

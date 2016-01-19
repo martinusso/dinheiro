@@ -3,14 +3,14 @@ package dinheiro
 import (
 	"errors"
 	"math"
-	"strconv"
+	"strings"
 )
 
 const (
-	negativeValueError    = "Não é possível transformar números negativos."
-	unsupportedValueError = "Número muito grande para ser transformado em extenso."
+	negativeValueError = "Não é possível transformar números negativos."
 
-	andSeparator = " e "
+	andSeparator = "e"
+	comma        = ","
 
 	currencyCentavo  = "centavo"
 	currencyCentavos = "centavos"
@@ -65,10 +65,16 @@ var (
 	}
 	hundred  = "cem"
 	thousand = "mil"
-	million  = "milhão"
-	millions = "milhões"
-	billion  = "bilhão"
-	billions = "bilhões"
+
+	thousandsSingular = []string{"", "mil", "milhão", "bilhão", "trilhão", "quadrilhão",
+		"quintilhão", "sextilhão", "septilhão", "octilhão", "nonilhão", "decilhão",
+		"undecilhão", "duodecilhão", "tredecilhão", "quattuordecilhão", "quindecilhão",
+		"sexdecilhão", "septendecilhão", "octodecilhão", "novendecilhão", "vigintilhão"}
+
+	thousands = []string{"", "mil", "milhões", "bilhões", "trilhão", "quadrilhões",
+		"quintilhões", "sextilhões", "septilhões", "octilhões", "nonilhões", "decilhões",
+		"undecilhões", "duodecilhões", "tredecilhões", "quattuordecilhões", "quindecilhões",
+		"sexdecilhões", "septendecilhões", "octodecilhões", "novendecilhões", "vigintilhões"}
 )
 
 // Real é a moeda corrente no Brasil
@@ -78,85 +84,110 @@ type Real float64
 // PorExtenso Retorna o value por extenso do dinheiro
 // en: Returns the value into words
 func (real Real) PorExtenso() (string, error) {
-	var value string
+	words := []string{}
 
 	integer, fractional := math.Modf(float64(real))
 
 	if integer != 0 || fractional == 0 {
-		numberIntoWords, err := convertNumberIntoWords(integer)
+		numberIntoWords, err := writeOutNumbersInWords(integer)
 		if err != nil {
 			return "", err
 		}
-		value = numberIntoWords + " " + getIntegerUnit(integer)
+		words = append(words, numberIntoWords...)
+		words = append(words, getIntegerUnit(integer))
+
 	}
 
 	if fractional > 0 {
 		fractional := round(math.Abs(fractional) * 100)
-		numberIntoWords, err := convertNumberIntoWords(fractional)
+		numberIntoWords, err := writeOutNumbersInWords(fractional)
 		if err != nil {
 			return "", err
 		}
 		if integer > 0 {
-			value += andSeparator
+			words = append(words, andSeparator)
 		}
-		value += numberIntoWords + " " + getDecimalUnit(fractional)
+		words = append(words, numberIntoWords...)
+		words = append(words, getDecimalUnit(fractional))
 	}
-
-	return value, nil
+	return sanitize(words), nil
 }
 
-func convertNumberIntoWords(f float64) (string, error) {
+func writeOutNumbersInWords(f float64) ([]string, error) {
 	switch {
 	case f < 0:
-		return "", errors.New(negativeValueError)
+		return []string{}, errors.New(negativeValueError)
 	case f < 20:
-		return numbers[int(f)], nil
+		s := numbers[int(f)]
+		return []string{s}, nil
 	case f < 100:
 		return getNumberUnderHundred(f)
 	case f == 100:
-		return hundred, nil
+		return []string{hundred}, nil
 	case f < 1000:
 		return getNumberUnderThousand(f)
 	case f == 1000:
-		return thousand, nil
-	case f < 1000000:
-		return getNumberUnderMillion(f)
+		return []string{thousand}, nil
 	default:
-		return "", errors.New(unsupportedValueError)
+		return getUpThousand(f)
 	}
 }
 
-func getNumberUnderHundred(f float64) (string, error) {
+func getNumberUnderHundred(f float64) ([]string, error) {
 	value := tens[int((f-20)/10)]
+	words := []string{value}
+
 	mod := math.Mod(f, 10)
 	if mod != 0 {
-		value += andSeparator + numbers[int(mod)]
+		words = append(words, andSeparator)
+		words = append(words, numbers[int(mod)])
 	}
-	return value, nil
+	return words, nil
 }
 
-func getNumberUnderThousand(f float64) (string, error) {
+func getNumberUnderThousand(f float64) ([]string, error) {
 	value := hundreds[int(f/100-1)]
+	words := []string{value}
+
 	mod := math.Mod(f, 100)
 	if mod != 0 {
-		remaining, _ := convertNumberIntoWords(mod)
-		value += andSeparator + remaining
+		remaining, _ := writeOutNumbersInWords(mod)
+		words = append(words, andSeparator)
+		words = append(words, remaining...)
 	}
-	return value, nil
+	return words, nil
 }
 
-func getNumberUnderMillion(f float64) (string, error) {
-	s := strconv.Itoa(int(f))
-	t1, _ := strconv.Atoi(s[:len(s)-3])
-	t2, _ := strconv.Atoi(s[len(s)-3:])
+func getUpThousand(f float64) (words []string, err error) {
+	for i := 0; f >= 1; i++ {
+		var r float64
+		f, r = math.Modf(f / 1000)
+		r = round(math.Abs(r) * 1000)
 
-	value, _ := convertNumberIntoWords(float64(t1))
-	value += " " + thousand
-	if t2 > 0 {
-		t2IntoWords, _ := convertNumberIntoWords(float64(t2))
-		value += andSeparator + t2IntoWords
+		w, _ := writeOutNumbersInWords(r)
+		if (len(w) == 0) || (len(w) == 1 && w[0] == "") {
+			continue
+		}
+
+		if i > 0 {
+			w = append(w, getThousands(r, i))
+
+			if i > 1 {
+				w = append(w, comma)
+			} else {
+				w = append(w, andSeparator)
+			}
+		}
+		words = append(w, words...)
 	}
-	return value, nil
+	return words, nil
+}
+
+func getThousands(value float64, index int) string {
+	if value > 1 {
+		return thousands[index]
+	}
+	return thousandsSingular[index]
 }
 
 func getIntegerUnit(f float64) string {
@@ -171,6 +202,13 @@ func getDecimalUnit(f float64) string {
 		return currencyCentavo
 	}
 	return currencyCentavos
+}
+
+func sanitize(words []string) string {
+	s := strings.Join(words, " ")
+	s = strings.Replace(s, " , ", ", ", -1)
+	s = strings.Trim(s, " ")
+	return s
 }
 
 func round(val float64) float64 {
