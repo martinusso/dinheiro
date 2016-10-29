@@ -9,7 +9,7 @@ import (
 )
 
 const (
-	negativeValueError = "Não é possível transformar números negativos."
+	negativeValueError = "Não é possível converter valores negativos."
 
 	andSeparator = "e"
 	comma        = ","
@@ -103,7 +103,6 @@ func (real Real) PorExtenso() (string, error) {
 		}
 		words = append(words, numberIntoWords...)
 		words = append(words, getIntegerUnit(integer))
-
 	}
 
 	if fractional > 0 {
@@ -206,7 +205,7 @@ func getIntegerUnit(f float64) string {
 }
 
 func getDecimalUnit(f float64) string {
-	if f == 1 {
+	if f >= 0 && f < 2 {
 		return currencyCentavo
 	}
 	return currencyCentavos
