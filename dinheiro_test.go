@@ -3,15 +3,23 @@ package dinheiro
 import "testing"
 
 func TestRealPorExtenso(t *testing.T) {
-	value := 1.99
-	expected := "um real e noventa e nove centavos"
-	got, err := RealPorExtenso(value)
-
-	if err != nil {
-		t.Errorf("It wasn't expected any error, got '%s'", err.Error())
+	values := map[float64]string{
+		1.99:       "um real e noventa e nove centavos",
+		42.69:      "quarenta e dois reais e sessenta e nove centavos",
+		2015:       "dois mil e quinze reais",
+		802715:     "oitocentos e dois mil e setecentos e quinze reais",
+		775398007:  "setecentos e setenta e cinco milhões, trezentos e noventa e oito mil e sete reais",
+		1119929521: "um bilhão, cento e dezenove milhões, novecentos e vinte e nove mil e quinhentos e vinte e um reais",
 	}
-	if got != expected {
-		t.Errorf("Expected '%s' got '%s'", expected, got)
+	for f, expected := range values {
+		got, err := RealPorExtenso(f)
+
+		if err != nil {
+			t.Errorf("Error should be nil => %s", err)
+		}
+		if got != expected {
+			t.Errorf("Expected '%s' got '%s'", expected, got)
+		}
 	}
 }
 
@@ -26,67 +34,55 @@ func TestNegativeValue(t *testing.T) {
 }
 
 func TestCentavos(t *testing.T) {
-	var valores = [36]float64{
-		0.01, 0.02, 0.03, 0.04, 0.05, 0.06, 0.07, 0.08, 0.09,
-		0.1, 0.11, 0.12, 0.13, 0.14, 0.15, 0.16, 0.17, 0.18, 0.19,
-		0.20, 0.22,
-		0.30, 0.33,
-		0.40, 0.44,
-		0.50, 0.55,
-		0.60, 0.66,
-		0.70, 0.77,
-		0.80, 0.88,
-		0.90, 0.99,
-	}
-	var valuesIntoWords = [36]string{
-		"um centavo",
-		"dois centavos",
-		"três centavos",
-		"quatro centavos",
-		"cinco centavos",
-		"seis centavos",
-		"sete centavos",
-		"oito centavos",
-		"nove centavos",
-		"dez centavos",
-		"onze centavos",
-		"doze centavos",
-		"treze centavos",
-		"quatorze centavos",
-		"quinze centavos",
-		"dezesseis centavos",
-		"dezessete centavos",
-		"dezoito centavos",
-		"dezenove centavos",
-		"vinte centavos",
-		"vinte e dois centavos",
-		"trinta centavos",
-		"trinta e três centavos",
-		"quarenta centavos",
-		"quarenta e quatro centavos",
-		"cinquenta centavos",
-		"cinquenta e cinco centavos",
-		"sessenta centavos",
-		"sessenta e seis centavos",
-		"setenta centavos",
-		"setenta e sete centavos",
-		"oitenta centavos",
-		"oitenta e oito centavos",
-		"noventa centavos",
-		"noventa e nove centavos",
+	valores := map[float64]string{
+		0.01234: "um centavo",
+		0.01:    "um centavo",
+		0.02:    "dois centavos",
+		0.02345: "dois centavos",
+		0.03:    "três centavos",
+		0.04:    "quatro centavos",
+		0.05:    "cinco centavos",
+		0.06:    "seis centavos",
+		0.07:    "sete centavos",
+		0.08:    "oito centavos",
+		0.09:    "nove centavos",
+		0.1:     "dez centavos",
+		0.11:    "onze centavos",
+		0.12:    "doze centavos",
+		0.13:    "treze centavos",
+		0.14:    "quatorze centavos",
+		0.15:    "quinze centavos",
+		0.16:    "dezesseis centavos",
+		0.17:    "dezessete centavos",
+		0.18:    "dezoito centavos",
+		0.19:    "dezenove centavos",
+		0.2:     "vinte centavos",
+		0.22:    "vinte e dois centavos",
+		0.3:     "trinta centavos",
+		0.33:    "trinta e três centavos",
+		0.4:     "quarenta centavos",
+		0.44:    "quarenta e quatro centavos",
+		0.5:     "cinquenta centavos",
+		0.55:    "cinquenta e cinco centavos",
+		0.6:     "sessenta centavos",
+		0.66:    "sessenta e seis centavos",
+		0.7:     "setenta centavos",
+		0.77:    "setenta e sete centavos",
+		0.8:     "oitenta centavos",
+		0.88:    "oitenta e oito centavos",
+		0.9:     "noventa centavos",
+		0.99:    "noventa e nove centavos",
 	}
 	var real Real
-	for i := 0; i < 35; i++ {
-		want := valuesIntoWords[i]
-		real = Real(valores[i])
+	for f, expected := range valores {
+		real = Real(f)
 		got, err := real.PorExtenso()
 
 		if err != nil {
 			t.Errorf("Expected '%v' got '%v'", nil, err)
 		}
-
-		if got != want {
-			t.Errorf("Expected '%v' got '%v' - '%f'", want, got, real)
+		if got != expected {
+			t.Errorf("Expected '%v' got '%v' - '%f'", expected, got, real)
 		}
 	}
 }
@@ -130,21 +126,6 @@ func TestIntegersValues(t *testing.T) {
 	}
 }
 
-func TestUmRealENoventaENoveCentavos(t *testing.T) {
-	want := "um real e noventa e nove centavos"
-	var real Real
-	real = 1.99
-	got, err := real.PorExtenso()
-
-	if err != nil {
-		t.Errorf("Expected '%v' got '%v'", nil, err)
-	}
-
-	if got != want {
-		t.Errorf("Expected '%v' got '%v'", want, got)
-	}
-}
-
 func TestTens(t *testing.T) {
 	tens := [8]string{
 		"vinte reais",
@@ -170,21 +151,6 @@ func TestTens(t *testing.T) {
 		if got != want {
 			t.Errorf("Expected '%v' got '%v'", want, got)
 		}
-	}
-}
-
-func TestQuarentaEDoisReaisESessentaENoveCentavos(t *testing.T) {
-	want := "quarenta e dois reais e sessenta e nove centavos"
-	var real Real
-	real = 42.69
-	got, err := real.PorExtenso()
-
-	if err != nil {
-		t.Errorf("Expected '%v' got '%v'", nil, err)
-	}
-
-	if got != want {
-		t.Errorf("Expected '%v' got '%v'", want, got)
 	}
 }
 
@@ -221,66 +187,6 @@ func TestMilReais(t *testing.T) {
 	want := "mil reais"
 	var real Real
 	real = 1000
-	got, err := real.PorExtenso()
-
-	if err != nil {
-		t.Errorf("Expected '%v' got '%v'", nil, err)
-	}
-
-	if got != want {
-		t.Errorf("Expected '%v' got '%v'", want, got)
-	}
-}
-
-func TestDoisMilEQuinzeReais(t *testing.T) {
-	want := "dois mil e quinze reais"
-	var real Real
-	real = 2015
-	got, err := real.PorExtenso()
-
-	if err != nil {
-		t.Errorf("Expected '%v' got '%v'", nil, err)
-	}
-
-	if got != want {
-		t.Errorf("Expected '%v' got '%v'", want, got)
-	}
-}
-
-func TestOitocentosEDoisMilESetencentosQuinzeReais(t *testing.T) {
-	want := "oitocentos e dois mil e setecentos e quinze reais"
-	var real Real
-	real = 802715
-	got, err := real.PorExtenso()
-
-	if err != nil {
-		t.Errorf("Expected '%v' got '%v'", nil, err)
-	}
-
-	if got != want {
-		t.Errorf("Expected '%v' got '%v'", want, got)
-	}
-}
-
-func TestMilhoes(t *testing.T) {
-	want := "setecentos e setenta e cinco milhões, trezentos e noventa e oito mil e sete reais"
-	var real Real
-	real = 775398007
-	got, err := real.PorExtenso()
-
-	if err != nil {
-		t.Errorf("Expected '%v' got '%v'", nil, err)
-	}
-
-	if got != want {
-		t.Errorf("Expected '%v' got '%v'", want, got)
-	}
-}
-
-func TestBilhao(t *testing.T) {
-	want := "um bilhão, cento e dezenove milhões, novecentos e vinte e nove mil e quinhentos e vinte e um reais"
-	var real Real
-	real = 1119929521
 	got, err := real.PorExtenso()
 
 	if err != nil {
