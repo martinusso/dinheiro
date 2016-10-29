@@ -107,7 +107,7 @@ func (real Real) PorExtenso() (string, error) {
 	}
 
 	if fractional > 0 {
-		fractional := round(math.Abs(fractional) * 100)
+		fractional = round(math.Abs(fractional) * 100)
 		numberIntoWords, err := writeOutNumbersInWords(fractional)
 		if err != nil {
 			return "", err
