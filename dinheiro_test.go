@@ -11,8 +11,8 @@ func TestRealPorExtenso(t *testing.T) {
 		775398007:  "setecentos e setenta e cinco milhões, trezentos e noventa e oito mil e sete reais",
 		1119929521: "um bilhão, cento e dezenove milhões, novecentos e vinte e nove mil e quinhentos e vinte e um reais",
 	}
-	for n, expected := range values {
-		got, err := RealPorExtenso(n)
+	for f, expected := range values {
+		got, err := RealPorExtenso(f)
 
 		if err != nil {
 			t.Errorf("Error should be nil => %s", err)
