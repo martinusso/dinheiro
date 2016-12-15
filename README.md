@@ -7,6 +7,7 @@ Converte um valor monetário (em Real) por extenso
 
 [![Circle CI](https://circleci.com/gh/martinusso/dinheiro/tree/master.svg?style=shield&circle-token=:circle-token)](https://circleci.com/gh/martinusso/dinheiro/tree/master)
 [![Build Status](https://travis-ci.org/martinusso/dinheiro.svg)](https://travis-ci.org/martinusso/dinheiro)
+[![Coverage Status](https://coveralls.io/repos/github/martinusso/dinheiro/badge.svg?branch=master)](https://coveralls.io/github/martinusso/dinheiro?branch=master)
 [![GoDoc](https://godoc.org/github.com/martinusso/dinheiro?status.svg)](https://godoc.org/github.com/martinusso/dinheiro)
 
 ## Usage
